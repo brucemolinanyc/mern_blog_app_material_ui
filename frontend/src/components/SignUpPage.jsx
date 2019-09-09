@@ -15,6 +15,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+import axios from 'axios';
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -77,6 +79,20 @@ export default function SignUp() {
   const handleSubmit = e => {
     e.preventDefault();
     console.log(name, email, password, confirmPassword)
+    if (password === confirmPassword){
+
+        const newUser = {
+            name,
+            email,
+            password
+        }
+
+        axios.post('http://localhost:4000/users', newUser)
+        .then(res => console.log(res));
+    } else {
+        alert("Passwords do not match!")
+    }
+    
   };
 
   return (
