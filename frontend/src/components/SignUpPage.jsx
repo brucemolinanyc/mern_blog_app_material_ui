@@ -69,13 +69,14 @@ const useStyles = makeStyles(theme => ({
   
 export default function SignUp() {
   const classes = useStyles();
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log(email, password)
+    console.log(name, email, password, confirmPassword)
   };
 
   return (
@@ -89,7 +90,7 @@ export default function SignUp() {
     Bruce's Awesome Blog
   </Typography>
         <Button variant="outlined" size="small" href="/">
-            Log in
+            Log In
         </Button>
     </Toolbar>
       <CssBaseline />
@@ -97,11 +98,23 @@ export default function SignUp() {
         <Avatar className={classes.avatar}>
         </Avatar>
         <Typography component="h1" variant="h5">
-          Log in
+          Sign Up
         </Typography>
 
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
+          <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="Name"
+                label="Name"
+                name="name"
+                value={name}
+                onChange={ e => setName(e.target.value)}
+              />
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -112,7 +125,6 @@ export default function SignUp() {
                 name="email"
                 value={email}
                 onChange={ e => setEmail(e.target.value)}
-                autoComplete="email"
               />
             </Grid>
             <Grid item xs={12}>
@@ -126,7 +138,6 @@ export default function SignUp() {
                 id="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                autoComplete={false}
               />
             </Grid>
             <Grid item xs={12}>
@@ -140,7 +151,6 @@ export default function SignUp() {
               id="confirm_password"
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
-              autoComplete={false}
               />
           </Grid>
           </Grid>
@@ -151,7 +161,7 @@ export default function SignUp() {
             color="primary"
             className={classes.submit}
           >
-            Sign In
+            Create your Account
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
