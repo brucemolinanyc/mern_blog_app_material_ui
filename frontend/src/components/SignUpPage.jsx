@@ -65,11 +65,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SignUp() {
 
+  
+export default function SignUp() {
   const classes = useStyles();
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -86,8 +88,8 @@ export default function SignUp() {
         >
     Bruce's Awesome Blog
   </Typography>
-        <Button variant="outlined" size="small" href="/signup">
-            Sign up
+        <Button variant="outlined" size="small" href="/">
+            Log in
         </Button>
     </Toolbar>
       <CssBaseline />
@@ -124,9 +126,23 @@ export default function SignUp() {
                 id="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                autoComplete="current-password"
+                autoComplete={false}
               />
             </Grid>
+            <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              required
+              fullWidth
+              name="confirm_password"
+              label="Confirm Password"
+              type="password"
+              id="confirm_password"
+              value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+              autoComplete={false}
+              />
+          </Grid>
           </Grid>
           <Button
             type="submit"
@@ -139,8 +155,8 @@ export default function SignUp() {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="/signup" variant="body2">
-                Don't have an account? Sign up
+              <Link href="/" variant="body2">
+                Have an account? Sign In
               </Link>
             </Grid>
           </Grid>
