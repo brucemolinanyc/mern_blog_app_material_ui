@@ -67,18 +67,27 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SignUp() {
+export default function SignUp(props) {
 
   const classes = useStyles();
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-
+  const [error, setError] = useState(false)
   const handleSubmit = e => {
     e.preventDefault();
     console.log(email, password)
     const userDetails = {email, password}
     axios.post('http://localhost:4000/user/login', userDetails)
-    .then(res => console.log(res))
+    .then(res => {
+      console.log(res.data);
+      if (!res.data.error){
+        props.history.push("/journal")
+      } else {
+        setError(true)
+        setEmail('')
+        setPassword('')
+      }
+    })
   };
 
   return (
@@ -133,6 +142,9 @@ export default function SignUp() {
               />
             </Grid>
           </Grid>
+          <Typography align="center" component="h1" variant="h5" color="error">
+            {error && <h4>User Not Found!</h4>}
+          </Typography>
           <Button
             type="submit"
             fullWidth
@@ -142,6 +154,7 @@ export default function SignUp() {
           >
             Sign In
           </Button>
+        
           <Grid container justify="flex-end">
             <Grid item>
               <Link href="/signup" variant="body2">

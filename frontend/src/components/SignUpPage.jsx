@@ -69,12 +69,13 @@ const useStyles = makeStyles(theme => ({
 
 
   
-export default function SignUp() {
+export default function SignUp(props) {
   const classes = useStyles();
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState(false)
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -88,9 +89,14 @@ export default function SignUp() {
         }
 
         axios.post('http://localhost:4000/users', newUser)
-        .then(res => console.log(res));
+        .then(res => console.log(res.data));
+        props.history.push("/journal")
     } else {
-        alert("Passwords do not match!")
+        setError(true)
+        setName('')
+        setEmail('')
+        setPassword('')
+        setConfirmPassword('')
     }
     
   };
@@ -119,6 +125,7 @@ export default function SignUp() {
 
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
+        
           <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -170,6 +177,9 @@ export default function SignUp() {
               />
           </Grid>
           </Grid>
+          <Typography align="center" component="h1" variant="h5" color="error">
+          {error && 'Passwords do not match!'}
+          </Typography>
           <Button
             type="submit"
             fullWidth

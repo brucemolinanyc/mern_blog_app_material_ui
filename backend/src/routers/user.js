@@ -23,8 +23,9 @@ router.post('/user/login', async (req, res) => {
     
     try {
         user = await User.findOne({email: userEmail, password: password})
+
         if (!user){
-            return res.status(404).send({error: "User not found"})
+            res.send({"error": "User not found"})
         }
         res.status(201).send(user)
     } catch (e) {
