@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+
 const Entry = mongoose.model('Entry', {
     title:{
         type: String,
@@ -14,6 +15,11 @@ const Entry = mongoose.model('Entry', {
     },
     date:{
         type: Date
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
     }
 })
 

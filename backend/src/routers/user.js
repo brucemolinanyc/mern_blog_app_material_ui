@@ -1,15 +1,18 @@
 const express = require('express')
 const User = require('../models/user')
+const auth = require('../middleware/auth')
 const router = new express.Router()
 
 
 // CREATE A NEW USER
 router.post('/users', async (req, res) => {
     const user = new User(req.body)
-
+   
     try {
         await user.save()
-        res.status(201).send(user)
+        const token = await user.generateAuthToken()
+
+        res.status(201).send({user: user, token: token})
     } catch (e) {
         res.status(400).send(e)
     }
@@ -17,52 +20,58 @@ router.post('/users', async (req, res) => {
 })
 
 // LOGIN A USER
-router.post('/user/login', async (req, res) => {
+router.post('/users/login', async (req, res) => {
     const userEmail = req.body.email 
     const password = req.body.password
     
     try {
-        user = await User.findOne({email: userEmail, password: password})
+        // const user = await User.findOne({email: userEmail, password: password})
+         // if (!user){
+        //     res.send({"error": "User not found"})
+        // }
+        const user = await User.findByCredentials(userEmail, password)
+        const token = await user.generateAuthToken()
+        res.send({user: user, token: token})
 
-        if (!user){
-            res.send({"error": "User not found"})
-        }
-        res.status(201).send(user)
+       
     } catch (e) {
-        res.status(500).send(e)
+        res.status(500).send({"error": "Unable to login"})
     }
 })
 
-// GET ALL USERS
-router.get('/users', async (req, res) => {
-    try {
-        const users = await User.find({})
-        res.send(users)
+// LOGOUT USER
+router.post('/users/logout', auth, async (req, res) =>{
+    try{
+        req.user.tokens = req.user.tokens.filter((token) => {
+            return token.token !== req.token
+        })
+        await req.user.save()
+
+        res.send()
     } catch (e) {
-        res.status(500).send(e)
+        res.status(500).send()
     }
 })
 
-// GET USER BY ID 
-router.get('/users/:id', async (req, res) => {
-    const _id = req.params.id
-
+router.post('/users/logoutAll', auth, async (req, res) => {
     try {
-        const user = await User.findById(_id)
-        if (!user){
-            return res.status(404).send()
-        }
-        res.send(user)
+        req.user.tokens = []
+        await req.user.save()
+        res.send()
     } catch (e) {
-        res.status(500).send(e)
+        res.status(500).send()
     }
+})
+
+// GET LOGGED IN USER
+router.get('/users/me', auth, async (req, res) => {
+    res.send(req.user)
 })
 
 // UPDATE A USER BY THEIR ID
-router.patch('/users/:id', async (req, res) => {
-    // console.log(Object.keys(req.body))
+router.patch('/users/me', auth, async (req, res) => {
     const updates = Object.keys(req.body)
-    const allowedUpdates = ['name', 'email', 'password', 'age']
+    const allowedUpdates = ['name', 'email', 'password']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
 
     if (!isValidOperation){
@@ -70,26 +79,21 @@ router.patch('/users/:id', async (req, res) => {
     }
 
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true}) 
-        
-        if (!user){
-            return res.status(404).send()
-        }
-        res.send(user)
+        // const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true}) 
+        updates.forEach((update)=> req.user[update] = req.body[update])
+        await req.user.save()
+
+        res.send(req.user)
     } catch(e){
         res.status(400).send(e)
     }
 })
 
-// DELETE A USER 
-router.delete('/user/:id', async (req, res) => {
+// DELETE YOURSELF
+router.delete('/users/me', auth, async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id)
-
-        if (!user){
-            return res.status(404).send()
-        }
-        res.send(user)
+        await req.user.remove()
+        res.send(req.user)
     } catch (e) {
         res.status(500).send()
     }
