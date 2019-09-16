@@ -64,7 +64,8 @@ router.post('/users/logoutAll', auth, async (req, res) => {
 
 // GET LOGGED IN USER
 router.get('/users/me', auth, async (req, res) => {
-    // console.log(req)
+
+    console.log(req)
     // console.log(req.header('Authorization'))
     res.send(req.user)
 })
