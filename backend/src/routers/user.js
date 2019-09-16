@@ -14,7 +14,8 @@ router.post('/users', async (req, res) => {
 
         res.status(201).send({user: user, token: token})
     } catch (e) {
-        res.status(400).send(e)
+        res.send({"error": "Unable to create"})
+
     }
 
 })
@@ -32,22 +33,20 @@ router.post('/users/login', async (req, res) => {
         const user = await User.findByCredentials(userEmail, password)
         const token = await user.generateAuthToken()
         res.send({user: user, token: token})
-
-       
     } catch (e) {
-        res.status(500).send({"error": "Unable to login"})
+        res.send({"error": "Unable to login"})
     }
 })
 
-// LOGOUT USER
+// LOGOUT USER - removes their latest token and resaves them - need token to be logged in
 router.post('/users/logout', auth, async (req, res) =>{
     try{
         req.user.tokens = req.user.tokens.filter((token) => {
             return token.token !== req.token
         })
         await req.user.save()
-
-        res.send()
+        console.log("post", req.user)
+        res.send("Logged out")
     } catch (e) {
         res.status(500).send()
     }
@@ -65,6 +64,8 @@ router.post('/users/logoutAll', auth, async (req, res) => {
 
 // GET LOGGED IN USER
 router.get('/users/me', auth, async (req, res) => {
+    // console.log(req)
+    // console.log(req.header('Authorization'))
     res.send(req.user)
 })
 

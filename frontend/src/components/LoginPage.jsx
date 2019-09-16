@@ -77,12 +77,12 @@ export default function SignUp(props) {
     e.preventDefault();
     console.log(email, password)
     const userDetails = {email, password}
-    axios.post('http://localhost:4000/user/login', userDetails)
+    axios.post('http://localhost:4000/users/login', userDetails)
     .then(res => {
-      console.log(res.data);
       if (!res.data.error){
         props.history.push("/journal")
       } else {
+        console.log("cant find user")
         setError(true)
         setEmail('')
         setPassword('')
@@ -143,7 +143,7 @@ export default function SignUp(props) {
             </Grid>
           </Grid>
           <Typography align="center" component="h1" variant="h5" color="error">
-            {error && <h4>User Not Found!</h4>}
+            {error && "User Not Found!"}
           </Typography>
           <Button
             type="submit"

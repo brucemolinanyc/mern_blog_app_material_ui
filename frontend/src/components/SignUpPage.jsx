@@ -79,27 +79,27 @@ export default function SignUp(props) {
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log(name, email, password, confirmPassword)
     if (password === confirmPassword){
-
         const newUser = {
             name,
             email,
             password
         }
-
         axios.post('http://localhost:4000/users', newUser)
-        .then(res => console.log(res.data));
+        .then( (res) => 
+        localStorage.setItem('user', JSON.stringify(res.data.user), 
+        localStorage.setItem('token', JSON.stringify(res.data.token))
+        ))
         props.history.push("/journal")
-    } else {
+        } else {
         setError(true)
         setName('')
         setEmail('')
         setPassword('')
         setConfirmPassword('')
+      }
     }
-    
-  };
+
 
   return (
     <Container className={classes.container}>
@@ -178,7 +178,7 @@ export default function SignUp(props) {
           </Grid>
           </Grid>
           <Typography align="center" component="h1" variant="h5" color="error">
-          {error && 'Passwords do not match!'}
+          {error && 'Unable to create account - please try again'}
           </Typography>
           <Button
             type="submit"
