@@ -39,7 +39,8 @@ router.post('/users/login', async (req, res) => {
 })
 
 // LOGOUT USER - removes their latest token and resaves them - need token to be logged in
-router.post('/users/logout', auth, async (req, res) =>{
+// router.post('/users/logout', auth, async (req, res) =>{
+router.post('/users/logout', async (req, res) =>{
     try{
         req.user.tokens = req.user.tokens.filter((token) => {
             return token.token !== req.token
@@ -52,7 +53,7 @@ router.post('/users/logout', auth, async (req, res) =>{
     }
 })
 
-router.post('/users/logoutAll', auth, async (req, res) => {
+router.post('/users/logoutAll', async (req, res) => {
     try {
         req.user.tokens = []
         await req.user.save()
@@ -92,7 +93,7 @@ router.patch('/users/me', auth, async (req, res) => {
 })
 
 // DELETE YOURSELF
-router.delete('/users/me', auth, async (req, res) => {
+router.delete('/users/me', async (req, res) => {
     try {
         await req.user.remove()
         res.send(req.user)
